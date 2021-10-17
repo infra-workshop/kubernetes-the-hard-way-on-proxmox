@@ -37,10 +37,10 @@ default via 192.168.8.1 dev ens18 proto static
 
 これを永続化するには、ネットワーク設定を編集する必要があります(Linuxディストロにより方法は異なります。
 
-Example for **Ubuntu 18.04** and higher:
+Example for **Ubuntu 20.04** and higher:
 
 ```bash
-vi /etc/netplan/00-installer-config.yaml
+vi /etc/netplan/99_config.yaml
 ```
 
 > 設定内容 (example for worker-0, **作業中のワーカーノードに直接紐付いたPOD CIDRを指定しないでください**):

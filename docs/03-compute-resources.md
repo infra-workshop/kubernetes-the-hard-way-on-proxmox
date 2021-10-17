@@ -180,7 +180,7 @@ ssh root@controller-0
 > Output:
 
 ```bash
-Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64)
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 4.15.0-101-generic x86_64)
 
 ...
 

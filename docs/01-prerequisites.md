@@ -22,50 +22,50 @@ Promoxのハイパーバイザ上では、私の環境では`k8s-`というプ�
 
 ![proxmox vm list](images/proxmox-vm-list.PNG)
 
-## Prepare the environment
+## 環境の準備
 
-### Hypervisor network
+### ハイパーバイザのネットワーク
 
-For this tutorial, you need 2 networks on your Proxmox hypervisor :
+本チュートリアルでは、Promox上に2つのネットワークが必要です:
 
-* a public network bridge (`vmbr0` in the following screenshot).
-* a private Kubernetes network bridge (`vmbr8` in the following screenshot).
+* パブリックネットワークブリッジ(下記スクショにおける`vmbr0`)
+* プライベートネットワークブリッジ(下記スクショにおける`vmbr8`)
 
 ![proxmox network](images/proxmox-network.PNG)
 
-> Note: the pods networks will be defined later.
+> 備考: Podネットワークは後で定義します
 
-All the Kubernetes nodes (workers and controllers) only need one network interface linked to the private Kubernetes network (`vmbr8`).
+すべてのKubernetesノード(ワーカー、コントローラー)ではプライベートなKubernetesネットワーク(`vmbr8`)だけが必須要件です。
 
 ![proxmox vm hardware](images/proxmox-vm-hardware.PNG)
 
-The reverse proxy / client tools / gateway VM needs 2 network interfaces, one linked to the private Kubernetes network (`vmbr8`) and the other linked to the public network (`vmbr0`).
+リバースプロキシ、クライアントツール、ゲートウェイ用VMをでは2つのネットワークインターフェースが必要です。1つはKubernetesで使用するプライベートネットワーク(`vmbr8`)、もう1つはパブリックなネットワーク(`vmbr0`)です。
 
 ![proxmox vm hardware](images/proxmox-vm-hardware-gw.PNG)
 
-### Network architecture
+### ネットワーク設計
 
 This diagram represents the network design:
 
 ![architecture network](images/architecture-network.png)
 
-> If you want, you can define the IPv6 stack configuration.
+> やってみたければ、IPv6スタック構成を定義しても構いません。
 
-### Gateway VM installation
+### Gateway VMの設置
 
-> The basic VM installation process is not the purpose of this tutorial.
+> このVM設置プロセスはチュートリアルにおける主目的ではありません。
 >
-> Because it's just a tutorial, the IPv6 stack is not configured, but you can configure it if you want.
+> 今回はチュートリアルのため、IPv6スタックは設定しませんが、ご自身で追加で設定する分には構いません。
 
-This VM is used as a NAT gateway for the private Kubernetes network, as a reverse proxy and as a client tools.
+このVMではプライベートなKubernetesネットワークのためにリバースプロキシ及びクライアントツールとしてNATゲートウェイを使います。
 
-This means all the client steps like certificates generation will be done on this VM (in the next parts of this tutorial).
+つまり、証明書の生成などを含むすべてのクライアント側手順は基本的にはこのVM上で行います(本チュートリアルにおける次のステップ)。
 
-You have to:
+事前準備として以下のことを行ってください:
 
-* Install the latest [amd64 Debian netinst image](https://www.debian.org/CD/netinst/) on this VM.
+* VMに最新の[amd64 Debian netinst image](https://www.debian.org/CD/netinst/)をインストールします。
 
-* Configure the network interfaces (see the network architecture). Example of `/etc/network/interfaces` file if your public interface is ens18 and your private interface is ens19 (you need to replace `PUBLIC_IP_ADDRESS`, `MASK` and `PUBLIC_IP_GATEWAY` with your values):
+* NICをネットワーク設計どおりに設定します。`/etc/network/interfaces`ファイルの一例は、パブリックIFがens18でプライベートIFがens19であれば以下のようになります(`PUBLIC_IP_ADDRESS`、`MASK`及び`PUBLIC_IP_GATEWAY`はご自身で置き換えてください):
 
 ```bash
 source /etc/network/interfaces.d/*
@@ -90,17 +90,17 @@ iface ens19 inet static
         dns-nameservers 9.9.9.9
 ```
 
-> If you want, you can define the IPv6 stack configuration.
+> やってみたければ、IPv6スタック構成を定義しても構いません。
 >
-> If you want, you can use another DNS resolver.
+> 必要であれば、DNSリゾルバを他のものにしても構いません。
 
-* Define the VM hostname:
+* VMのホスト名を定義します:
 
 ```bash
 sudo hostnamectl set-hostname gateway-01
 ```
 
-* Update the packages list and update the system:
+* パッケージリストを最新化し、システムを最新にします:
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
@@ -112,7 +112,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install ssh vim tmux curl ntp iptables-persistent -y
 ```
 
-* Enable and start the SSH and NTP services:
+* SSH及びNTPサービスを有効化します:
 
 ```bash
 sudo systemctl enable ntp
@@ -121,16 +121,16 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 
-* Enable IP routing:
+* IPルーティングを有効化します:
 
 ```bash
 sudo echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
 sudo echo '1' > /proc/sys/net/ipv4/ip_forward
 ```
 
-> If you want, you can define the IPv6 stack configuration.
+> やってみたければ、IPv6スタック構成を定義しても構いません。
 
-* Configure the iptables firewall (allow some ports and configure NAT). Example of `/etc/iptables/rules.v4` file if ens18 is your public interface and ens19 is your private interface:
+* NAT構成とポート開放のためにiptablesを設定します。 `/etc/iptables/rules.v4`の一例は、パブリックIFがens18でプライベートIFがens19であれば以下のようになります:
 
 ```bash
 # Generated by xtables-save v1.8.2 on Fri Jun  5 16:45:02 2020
@@ -155,15 +155,15 @@ COMMIT
 # Completed on Fri Jun  5 16:45:02 2020
 ```
 
-> If you want, you can define the IPv6 stack configuration.
+> やってみたければ、IPv6スタック構成を定義しても構いません。
 
-* If you want to restore/active iptables rules:
+* iptablesのルールをリストア/アクティブにするには以下を実行します:
 
 ```bash
 sudo iptables-restore < /etc/iptables/rules.v4
 ```
 
-* Configure the `/etc/hosts` file (you need to replace `PUBLIC_GW_IP`):
+* `/etc/hosts`を以下のように設定します(`PUBLIC_GW_IP`はご自身で置き換えてください):
 
 ```bash
 127.0.0.1       localhost
@@ -183,27 +183,27 @@ ff02::2 ip6-allrouters
 192.168.8.22    worker-2
 ```
 
-* To confirm the network configuration, reboot the VM and check the active IP addresses:
+* ネットワーク構成を確認するために、VMの再起動を実施し、アクティブなIPアドレスを確認します:
 
 ```bash
 sudo reboot
 ```
 
-### Kubernetes nodes VM installation
+### Kubernetesノード用VMの設置
 
-> The basic VM installation process is not the purpose of this tutorial.
+> このVM設置プロセスはチュートリアルにおける主目的ではありません。
 >
-> Because it's just a tutorial, the IPv6 stack is not configured, but you can configure it if you want.
+> 今回はチュートリアルのため、IPv6スタックは設定しませんが、ご自身で追加で設定する分には構いません。
 
-These VM are used as Kubernetes node (controllers or workers).
+これらのVMはKubernetesノード(コントローラー及びワーカー)に使われます。
 
-The basic VM configuration process is the same for the 6 VM (you can also configure one, clone it and change IP address and hostname for each clone).
+基本的なVM構成プロセスは6台ともすべて同じです(1台を構成し、クローン後に各VMでIPアドレスをアドレスとホスト名を変更することもできます)。
 
-You have to:
+事前準備として以下のことを行ってください:
 
-* Install the [Ubuntu 18.04.4 LTS (Bionic Beaver) Server install image](https://releases.ubuntu.com/18.04/) on this VM.
+* [Ubuntu 20.04.3 LTS (Bionic Beaver) Server install image](https://releases.ubuntu.com/20.04/)をVM上にインストールします。
 
-* Configure the network interface (see the network architecture). Example of `/etc/netplan/00-installer-config.yaml` file if ens18 is the name of your private network interface (you need to change the IP address depending on the installed server):
+* NICをネットワーク設計どおりに設定します。`/etc/network/interfaces`ファイルの一例は、パブリックIFがens18でプライベートIFがens19であれば以下のようになります(`PUBLIC_IP_ADDRESS`、`MASK`及び`PUBLIC_IP_GATEWAY`はご自身で置き換えてください):
 
 ```bash
 # This is the network config written by 'subiquity'
@@ -219,17 +219,17 @@ network:
   version: 2
 ```
 
-> If you want, you can define the IPv6 stack configuration.
+> やってみたければ、IPv6スタック構成を定義しても構いません。
 >
-> If you want, you can use another DNS resolver.
+> 必要であれば、DNSリゾルバを他のものにしても構いません。
 
-* Define the VM hostname (example for controller-0):
+* VMのホスト名を定義(以下はcontroller-0での例):
 
 ```bash
 sudo hostnamectl set-hostname controller-0
 ```
 
-* Update the packages list and update the system:
+* パッケージリストを最新化し、システムを最新にします:
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
@@ -241,7 +241,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install ssh ntp -y
 ```
 
-* Enable and start the SSH and NTP services:
+* SSH及びNTPサービスを有効化します:
 
 ```bash
 sudo systemctl enable ntp
@@ -250,7 +250,7 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 
-* Configure `/etc/hosts` file. Example for controller-0 (need to replace `PUBLIC_GW_IP` and adapt this sample config for each VM):
+* `/etc/hosts`を設定します。以下はcontroller-0の場合の例です(`PUBLIC_GW_IP`はご自身で置き換えて、各VMに反映してください。):
 
 ```bash
 127.0.0.1 localhost
@@ -274,7 +274,7 @@ PUBLIC_GW_IP    gateway-01.external
 192.168.8.22    worker-2
 ```
 
-* To confirm the network configuration, reboot the VM and check the active IP address:
+* ネットワーク構成を確認するために、VMの再起動を実施し、アクティブなIPアドレスを確認します:
 
 ```bash
 sudo reboot
