@@ -1,21 +1,21 @@
-# Cleaning Up
+# お掃除
 
-In this lab you will delete the resources created during this tutorial.
+本実習では、チュートリアルで作成した計算資源を削除します。
 
-## Virtual Machines
+## 仮想マシン
 
-Stop the 7 VM created for this tutorial:
+作成した7台VMを停止します:
 
 ```bash
 sudo shutdown -h now
 ```
 
-Delete all the VMs via the Proxmox WebUI or the Proxmox CLI (on the hypervisor):
+PromoxのWebUIまたはCLIを用いて、すべてのVMを削除します。
 
 ```bash
 sudo qm destroy <vmid> --purge
 ```
 
-## Networking
+## ネットワーク
 
 Delete the private Kubernetes network (`vmbr8`) via the Proxmox WebUI (to avoid fatal misconfiguration).

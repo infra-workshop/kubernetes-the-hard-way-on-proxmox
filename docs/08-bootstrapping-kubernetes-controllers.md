@@ -1,30 +1,30 @@
-# Bootstrapping the Kubernetes Control Plane
+# Kubernetesコントロールプレーンのブートストラップ
 
-In this lab you will bootstrap the Kubernetes control plane across three VM instances and configure it for high availability. You will also create a load balancer that exposes the Kubernetes API Servers to remote clients. The following components will be installed on each node: Kubernetes API Server, Scheduler, and Controller Manager.
+本実習では、3つのインスタンスでコントロールプレーンをブートストラップして可用性の高い構成を実現します。また、KubernetesのAPIサーバーをリモートクライアントに公開する外部ロードバランサも作成します。各ノードには、Kubernetes API Server、Scheduler、Controller Managerの各コンポーネントがインストールされます。
 
-## Prerequisites
+## 前提条件
 
-The commands in this lab must be run on each controller instance: `controller-0`, `controller-1`, and `controller-2`. Login to each controller instance using the `ssh` command. Example:
+本実習のコマンドは`controller-0`、`controller-1`、`controller-2`の各コントロールプレーン用インスタンスで実行する必要があります。Login to each controller instance using the `ssh` command. Example:
 
 ```bash
 ssh root@controller-0
 ```
 
-### Running commands in parallel with tmux
+### tmuxを使った並列なコマンド実行
 
-[tmux](https://github.com/tmux/tmux/wiki) can be used to run commands on multiple compute instances at the same time. See the [Running commands in parallel with tmux](01-prerequisites.md#running-commands-in-parallel-with-tmux) section in the Prerequisites lab.
+[tmux](https://github.com/tmux/tmux/wiki)を使用すると複数のインスタンスで同時にコマンドを実行できます。前提条件の[tmuxを使った並列なコマンド実行](01-prerequisites.md#tmuxを使った並列なコマンド実行)セクションを参照してください。
 
-## Provision the Kubernetes Control Plane
+## Kubernetesコントロールプレーンのプロビジョニング
 
-Create the Kubernetes configuration directory:
+Kubenretesのコンフィグ用ディレクトリを作成します:
 
 ```bash
 sudo mkdir -p /etc/kubernetes/config
 ```
 
-### Download and Install the Kubernetes Controller Binaries
+### Kubernetesコントローラー用バイナリーのダウンロードとインストール
 
-Download the official Kubernetes release binaries:
+Kubernetesの公式リリースバイナリーをダウンロードします:
 
 ```bash
 wget -q --show-progress --https-only --timestamping \
@@ -34,14 +34,14 @@ wget -q --show-progress --https-only --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl"
 ```
 
-Install the Kubernetes binaries:
+Kubernetesバイナリーをインストールします:
 
 ```bash
 chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
 sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 ```
 
-### Configure the Kubernetes API Server
+### Kubernetes APIサーバーの設定
 
 ```bash
 sudo mkdir -p /var/lib/kubernetes/
@@ -51,7 +51,7 @@ sudo mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
   encryption-config.yaml /var/lib/kubernetes/
 ```
 
-The instance internal IP address will be used to advertise the API Server to members of the cluster. Define the INTERNAL_IP (replace MY_NODE_INTERNAL_IP by the value):
+クラスターのメンバーにAPIサーバーを通知するためにインスタンスの内部IPアドレスが使用されます。Define the INTERNAL_IP (replace MY_NODE_INTERNAL_IP by the value):
 
 ```bash
 INTERNAL_IP=MY_NODE_INTERNAL_IP
@@ -59,7 +59,7 @@ INTERNAL_IP=MY_NODE_INTERNAL_IP
 
 > Example for controller-0 : 192.168.8.10
 
-Create the `kube-apiserver.service` systemd unit file:
+systemdユニットファイル`kube-apiserver.service`を作成します:
 
 ```bash
 KUBERNETES_PUBLIC_ADDRESS=MY_PUBLIC_IP_ADDRESS
@@ -108,15 +108,15 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### Configure the Kubernetes Controller Manager
+### Kubernetesコントローラーマネージャーの設定
 
-Move the `kube-controller-manager` kubeconfig into place:
+kubeconfig`kube-controller-manager`を以下の場所に配置します:
 
 ```bash
 sudo mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
 ```
 
-Create the `kube-controller-manager.service` systemd unit file:
+systemdユニットファイル`kube-controller-manager.service`を作成します:
 
 ```bash
 cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
@@ -146,15 +146,15 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### Configure the Kubernetes Scheduler
+### Kubernetesスケジューラーの設定
 
-Move the `kube-scheduler` kubeconfig into place:
+kubeconfig`kube-scheduler`を以下の場所に配置します:
 
 ```bash
 sudo mv kube-scheduler.kubeconfig /var/lib/kubernetes/
 ```
 
-Create the `kube-scheduler.yaml` configuration file:
+設定ファイル`kube-scheduler.yaml`を作成します:
 
 ```bash
 cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
@@ -167,7 +167,7 @@ leaderElection:
 EOF
 ```
 
-Create the `kube-scheduler.service` systemd unit file:
+systemdユニットファイル`kube-scheduler.service`を作成します:
 
 ```bash
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
@@ -187,7 +187,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### Start the Controller Services
+### コントローラーのサービスを起動
 
 ```bash
 sudo systemctl daemon-reload
@@ -195,9 +195,9 @@ sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 ```
 
-> Allow up to 10 seconds for the Kubernetes API Server to fully initialize.
+> KubernetesのAPIサーバーが完全に初期化されるまでには最大10秒かかります。
 
-### Verification
+### 検証
 
 ```bash
 kubectl cluster-info --kubeconfig admin.kubeconfig
@@ -223,21 +223,21 @@ date: Wed, 24 Jun 2020 12:24:52 GMT
 ok
 ```
 
-> Remember to run the above commands on each controller node: `controller-0`, `controller-1`, and `controller-2`.
+> 上記のコマンドは各コントローラノード`controller-0`、`controller-1`、`controller-2`にて忘れずに実行してください。
 
-## RBAC for Kubelet Authorization
+## RBACを使ったKubeletの認可
 
-In this section you will configure RBAC permissions to allow the Kubernetes API Server to access the Kubelet API on each worker node. Access to the Kubelet API is required for retrieving metrics, logs, and executing commands in pods.
+本セクションでは、RBACのアクセス権を設定して、KubernetesのAPIサーバーが各ワーカーノード上のKubeletにアクセスできるようにします。メトリクスやログを取得したり、Pod内でコマンドを実行するためにはKubelet APIへのアクセスが必要です。
 
-> This tutorial sets the Kubelet `--authorization-mode` flag to `Webhook`. Webhook mode uses the [SubjectAccessReview](https://kubernetes.io/docs/admin/authorization/#checking-api-access) API to determine authorization.
+> 本チュートリアルでは、Kubeletの`--authorization-mode`フラグを`Webhook`に設定します。Webhookモードでは、[SubjectAccessReview](https://kubernetes.io/docs/admin/authorization/#checking-api-access) APIを使用して認可を判定します。
 
-The commands in this section will effect the entire cluster and only need to be run once from one of the controller nodes.
+本セクションのコマンドはクラスター全体に影響するため、1つのコントローラーノードから1回実行するだけで大丈夫です。
 
 ```bash
 ssh root@controller-0
 ```
 
-Create the `system:kube-apiserver-to-kubelet` [ClusterRole](https://kubernetes.io/docs/admin/authorization/rbac/#role-and-clusterrole) with permissions to access the Kubelet API and perform most common tasks associated with managing pods:
+`system:kube-apiserver-to-kubelet`という名前の[ClusterRole](https://kubernetes.io/docs/admin/authorization/rbac/#role-and-clusterrole)を作成し、Kubelet APIにアクセスしたり、Podの管理に関連する一般的なタスクを実行したりするための権限を付与します:
 
 ```bash
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
@@ -263,9 +263,9 @@ rules:
 EOF
 ```
 
-The Kubernetes API Server authenticates to the Kubelet as the `kubernetes` user using the client certificate as defined by the `--kubelet-client-certificate` flag.
+Kubernetes APIサーバーは、`--kubelet-client-certificate`フラグで定義されているクライアント証明書を使用して、`kubernetes`ユーザーとしてKubeletに認証します。
 
-Bind the `system:kube-apiserver-to-kubelet` ClusterRole to the `kubernetes` user:
+ClusterRole`system:kube-apiserver-to-kubelet`を`kubernetes`ユーザーにバインドします:
 
 ```bash
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
@@ -285,7 +285,7 @@ subjects:
 EOF
 ```
 
-## The Kubernetes Frontend Load Balancer
+## Kubernetesのフロントエンドロードバランサー
 
 In this section you will provision an Nginx load balancer to front the Kubernetes API Servers. The load balancer will listen on the private and the public IP address (on the `gateway-01` VM).
 
@@ -359,4 +359,4 @@ curl --cacert ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
 }
 ```
 
-Next: [Bootstrapping the Kubernetes Worker Nodes](09-bootstrapping-kubernetes-workers.md)
+Next: [Kubenretesワーカーノードのブートストラップ](09-bootstrapping-kubernetes-workers.md)

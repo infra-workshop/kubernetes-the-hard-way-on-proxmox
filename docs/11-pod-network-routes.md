@@ -1,21 +1,21 @@
-# Provisioning Pod Network Routes
+# Podが使うネットワーク経路のプロビジョニング
 
-Pods scheduled to a node receive an IP address from the node's Pod CIDR range. At this point pods can not communicate with other pods running on different nodes due to missing network [routes](https://cloud.google.com/compute/docs/vpc/routes).
+ノードにスケジュールされたPodは、ノードが持つPod CIDR範囲からIPアドレスを受け取ります。この時点ではネットワーク[経路](https://cloud.google.com/compute/docs/vpc/routes)が欠落しているため、Podは異なるノード上で動作している他のPodと通信できません。
 
-In this lab you will create a route for each worker node that maps the node's Pod CIDR range to the node's internal IP address.
+本実習では、ノードのPod CIDR範囲をノードの内部IPアドレスにマップするための経路を各ワーカーノード上に作成します。
 
-> There are [other ways](https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-achieve-this) to implement the Kubernetes networking model.
+> Kubernetesのネットワーキングモデルを実装する方法は[他にも](https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-achieve-this)あります。
 
-## The Routing Table
+## ルーティングテーブル
 
-**On each worker node**, add the following routes:
+**各ワーカーノード上で**、以下のルールを追加します:
 
-> **WARNING**: don't add the route associated to the POD CIDR for the current node (ex: don't add the 10.200.0.0/24 route if you are on the worker-0 node).
+> **WARNING**: 作業中のワーカーノードに直接紐付いたPOD CIDRをルーティングのルールに追加しないでください(例: worker-0上で作業している時に10.200.0.0/24を追加しないでください).
 
 ```bash
-ip route add 10.200.0.0/24 via 192.168.8.20 # Don't add on worker-0
-ip route add 10.200.1.0/24 via 192.168.8.21 # Don't add on worker-1
-ip route add 10.200.2.0/24 via 192.168.8.22 # Don't add on worker-2
+ip route add 10.200.0.0/24 via 192.168.8.20 # worker-0では追加しない
+ip route add 10.200.1.0/24 via 192.168.8.21 # worker-1では追加しない
+ip route add 10.200.2.0/24 via 192.168.8.22 # worker-2では追加しない
 ```
 
 > Don't take care of the `RTNETLINK answers: File exists` message, it appears just when you try to add an existing route, not a real problem.
@@ -35,7 +35,7 @@ default via 192.168.8.1 dev ens18 proto static
 192.168.8.0/24 dev ens18 proto kernel scope link src 192.168.8.21
 ```
 
-To make it persistent (if reboot), you need to edit your network configuration (depends on your Linux distribution).
+これを永続化するには、ネットワーク設定を編集する必要があります(Linuxディストロにより方法は異なります。
 
 Example for **Ubuntu 18.04** and higher:
 
@@ -43,7 +43,7 @@ Example for **Ubuntu 18.04** and higher:
 vi /etc/netplan/00-installer-config.yaml
 ```
 
-> Content (example for worker-0, **don't specify the POD CIDR associated with the current node**):
+> 設定内容 (example for worker-0, **作業中のワーカーノードに直接紐付いたPOD CIDRを指定しないでください**):
 
 ```bash
 # This is the network config written by 'subiquity'
@@ -64,4 +64,4 @@ network:
   version: 2
 ```
 
-Next: [Deploying the DNS Cluster Add-on](12-dns-addon.md)
+Next: [DNSクラスターアドオンのデプロイ](12-dns-addon.md)

@@ -1,10 +1,10 @@
 # Kubernetes The Hard Way - Proxmox (KVM)
 
-This tutorial walks you through setting up Kubernetes the hard way. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine), or the [Getting Started Guides](https://kubernetes.io/docs/setup).
+本チュートリアルでは、Kubernetesを地道にセットアップする方法を説明します。本ガイドは、Kubernetesクラスターを立てるための自動化コマンドを探している人には向いていません。そういう人は、[Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)や[Getting Started Guides](https://kubernetes.io/docs/setup)を御覧ください。
 
-Kubernetes The Hard Way is optimized for learning, which means taking the long route to ensure you understand each task required to bootstrap a Kubernetes cluster.
+Kubernetes The Hard Wayは勉強に適しています。長い道のりを経て、Kubernetesクラスターを起動するのに必要な各タスクを理解してください。
 
-> The results of this tutorial should not be viewed as production ready, and may receive limited support from the community, but don't let that stop you from learning!
+> 本チュートリアルの結果はプロダクションレディではなく、コミュニティからのサポートも限られていますが、だからといって勉強しない理由にはなりません！
 
 ## Overview of the Network Architecture
 
@@ -16,11 +16,11 @@ Kubernetes The Hard Way is optimized for learning, which means taking the long r
 
 ## Target Audience
 
-The target audience for this tutorial is someone planning to support a production Kubernetes cluster and wants to understand how everything fits together, in particular if you want to use a Proxmox hypervisor (or KVM).
+本チュートリアルの対象読者は、Kubernetesの本番クラスターのサポートを予定していて、すべてがどのように連携しているかを理解したいと思っていて、特にProxmox(あるいはKVM)を使いたいという方向けです。
 
 ## Cluster Details
 
-Kubernetes The Hard Way guides you through bootstrapping a highly available Kubernetes cluster with end-to-end encryption between components and RBAC authentication.
+Kubernetes The Hard Wayは、コンポーネント間のエンドツーエンドの暗号化とRBAC認証を使用して、可用性の高いKubernetesクラスターをブートストラップする手順を説明します。
 
 * [kubernetes](https://github.com/kubernetes/kubernetes) v1.21.5
 * [containerd](https://github.com/containerd/containerd) v1.4.4
@@ -30,19 +30,19 @@ Kubernetes The Hard Way guides you through bootstrapping a highly available Kube
 
 ## Labs
 
-This tutorial assumes you have access to a Proxmox hypervisor with at least 25GB free RAM and 140GB free HDD/SSD. While a Proxmox server is used for basic infrastructure requirements the lessons learned in this tutorial can be applied to other platforms (ESXi, KVM, VirtualBox, ...).
+本チュートリアルは、Proxmoxハイパーバイザが用意されていて、少なくとも25GBの空きメモリ、140GBのHDD/SSDがあることを前提としています。GCPは基本的なインフラストラクチャ要件に使用されますが、本チュートリアルで学習したレッスンは他のプラットフォームにも適用できます(ESXi, KVM, VirtualBox, ...)。
 
-* [Prerequisites](docs/01-prerequisites.md)
-* [Installing the Client Tools](docs/02-client-tools.md)
-* [Provisioning Compute Resources](docs/03-compute-resources.md)
-* [Provisioning the CA and Generating TLS Certificates](docs/04-certificate-authority.md)
-* [Generating Kubernetes Configuration Files for Authentication](docs/05-kubernetes-configuration-files.md)
-* [Generating the Data Encryption Config and Key](docs/06-data-encryption-keys.md)
-* [Bootstrapping the etcd Cluster](docs/07-bootstrapping-etcd.md)
-* [Bootstrapping the Kubernetes Control Plane](docs/08-bootstrapping-kubernetes-controllers.md)
-* [Bootstrapping the Kubernetes Worker Nodes](docs/09-bootstrapping-kubernetes-workers.md)
-* [Configuring kubectl for Remote Access](docs/10-configuring-kubectl.md)
-* [Provisioning Pod Network Routes](docs/11-pod-network-routes.md)
-* [Deploying the DNS Cluster Add-on](docs/12-dns-addon.md)
-* [Smoke Test](docs/13-smoke-test.md)
-* [Cleaning Up](docs/14-cleanup.md)
+* [前提条件](docs/01-prerequisites.md)
+* [クライアントツールのインストール](docs/02-client-tools.md)
+* [計算資源のプロビジョニング](docs/03-compute-resources.md)
+* [CA証明書のプロビジョニングとTLS証明書の生成](docs/04-certificate-authority.md)
+* [認証用Kubernetes設定ファイルの生成](docs/05-kubernetes-configuration-files.md)
+* [データ暗号化の設定とキーの生成](docs/06-data-encryption-keys.md)
+* [etcdクラスターのブートストラップ](docs/07-bootstrapping-etcd.md)
+* [Kubernetesコントロールプレーンのブートストラップ](docs/08-bootstrapping-kubernetes-controllers.md)
+* [Kubenretesワーカーノードのブートストラップ](docs/09-bootstrapping-kubernetes-workers.md)
+* [リモートアクセス用のkubectl設定](docs/10-configuring-kubectl.md)
+* [Podネットワークルートのプロビジョニング](docs/11-pod-network-routes.md)
+* [DNSクラスターアドオンのデプロイ](docs/12-dns-addon.md)
+* [スモークテスト](docs/13-smoke-test.md)
+* [お掃除](docs/14-cleanup.md)

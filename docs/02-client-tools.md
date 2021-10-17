@@ -1,10 +1,11 @@
-# Installing the Client Tools
+# クライアントツールのインストール
 
-In this lab you will install the command line utilities required to complete this tutorial: [cfssl](https://github.com/cloudflare/cfssl), [cfssljson](https://github.com/cloudflare/cfssl), and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl).
+本実習では、チュートリアルの実行に必要なコマンドである[cfssl](https://github.com/cloudflare/cfssl)、[cfssljson](https://github.com/cloudflare/cfssl)、[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl)をインストールします。
 
-## Install CFSSL
 
-The `cfssl` and `cfssljson` command line utilities will be used to provision a [PKI Infrastructure](https://en.wikipedia.org/wiki/Public_key_infrastructure) and generate TLS certificates.
+## cfsslのインストール
+
+[公開鍵基盤](https://ja.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%8D%B5%E5%9F%BA%E7%9B%A4)のプロビジョニングとTLS証明書の生成には、`cfssl`および`cfssljson`コマンドラインユーティリティが使用されます。
 
 On the **gateway-01** VM, download and install `cfssl` and `cfssljson`:
 
@@ -22,37 +23,32 @@ chmod +x cfssl cfssljson
 sudo mv cfssl cfssljson /usr/local/bin/
 ```
 
-### Verification
+### 検証
 
-Verify `cfssl` and `cfssljson` version 1.3.4 or higher is installed:
+インストールされた`cfssl`と`cfssljson`のバージョンが1.4.1以上であることを検証します:
 
-```bash
+```
 cfssl version
 ```
 
-> Output:
+> 出力結果
 
-```bash
-Version: 1.3.4
-Revision: dev
-Runtime: go1.13
+```
+Version: 1.4.1
+Runtime: go1.12.12
 ```
 
-```bash
+```
 cfssljson --version
 ```
-
-> Output:
-
-```bash
-Version: 1.3.4
-Revision: dev
-Runtime: go1.13
+```
+Version: 1.4.1
+Runtime: go1.12.12
 ```
 
 ## Install kubectl
 
-The `kubectl` command line utility is used to interact with the Kubernetes API Server. On the **gateway-01** VM, download and install `kubectl` from the official release binaries:
+`kubectl`コマンドは、KubernetesのAPIサーバーとの対話に使用されます。On the **gateway-01** VM, 公式リリースバイナリーから`kubectl`をダウンロードしてインストールします:
 
 ```bash
 wget https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
@@ -66,18 +62,18 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
 
-### Verification install
+### 検証
 
-Verify `kubectl` version 1.15.3 or higher is installed:
+インストールされた`kubectl`のバージョンが1.21.5以上であることを検証します:
 
-```bash
+```
 kubectl version --client
 ```
 
-> Output:
+> 出力結果
 
-```bash
-Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.21.5", GitCommit:"c96aede7b5205121079932896c4ad89bb93260af", GitTreeState:"clean", BuildDate:"2020-06-17T11:41:22Z", GoVersion:"go1.16.5", Compiler:"gc", Platform:"linux/amd64"}
+```
+Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.5", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:31:21Z", GoVersion:"go1.16.1", Compiler:"gc", Platform:"linux/amd64"}
 ```
 
-Next: [Provisioning Compute Resources](03-compute-resources.md)
+Next: [計算資源のプロビジョニング](03-compute-resources.md)

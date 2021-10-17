@@ -1,14 +1,14 @@
-# Configuring kubectl for Remote Access
+# リモートアクセス用のkubectl設定
 
-In this lab you will generate a kubeconfig file for the `kubectl` command line utility based on the `admin` user credentials.
+本実習では、`admin`ユーザーの認証情報に基づいた`kubectl`コマンド用のkubeconfigファイルを生成します。
 
-> Run the commands in this lab from the same directory used to generate the admin client certificates.
+> 本実習で使用するコマンドは、管理クライアント証明書の生成に使用したディレクトリと同じディレクトリから実行してください。
 
-## The Admin Kubernetes Configuration File
+## admin用Kubernetesコンフィグファイル
 
-Each kubeconfig requires a Kubernetes API Server to connect to. To support high availability the IP address assigned to the external load balancer fronting the Kubernetes API Servers will be used.
+kubeconfigには接続先のKubernetes APIサーバーが必要です。高可用性をサポートするために、Kubernetes APIサーバの前面に配置した外部ロードバランサに割り当てられたIPアドレスが使用されます。
 
-Generate a kubeconfig file suitable for authenticating as the `admin` user (replace MY_PUBLIC_IP_ADDRESS with your public IP address on the `gateway-01` VM):
+`admin`ユーザとして認証するのに適したkubeconfigファイルを生成します(replace MY_PUBLIC_IP_ADDRESS with your public IP address on the `gateway-01` VM):
 
 ```bash
 KUBERNETES_PUBLIC_ADDRESS=MY_PUBLIC_IP_ADDRESS
@@ -29,32 +29,28 @@ kubectl config set-context kubernetes-the-hard-way \
 kubectl config use-context kubernetes-the-hard-way
 ```
 
-## Verification
+## 検証
 
-Check the health of the remote Kubernetes cluster:
+リモートにあるKubernetesクラスターのバージョンを確認します:
 
 ```bash
-kubectl get componentstatuses
+kubectl version
 ```
 
 > Output:
 
 ```bash
-NAME                 STATUS    MESSAGE             ERROR
-controller-manager   Healthy   ok
-scheduler            Healthy   ok
-etcd-1               Healthy   {"health":"true"}
-etcd-2               Healthy   {"health":"true"}
-etcd-0               Healthy   {"health":"true"}
+Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.5", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:31:21Z", GoVersion:"go1.16.5", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.5", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:25:06Z", GoVersion:"go1.16.5", Compiler:"gc", Platform:"linux/amd64"}
 ```
 
-List the nodes in the remote Kubernetes cluster:
+リモートにあるKubernetesクラスター上にあるノードの一覧を表示します:
 
 ```bash
 kubectl get nodes
 ```
 
-> Output:
+> 出力結果
 
 ```bash
 NAME       STATUS   ROLES    AGE   VERSION
@@ -63,4 +59,4 @@ worker-1   Ready    <none>   91s   v1.21.5
 worker-2   Ready    <none>   90s   v1.21.5
 ```
 
-Next: [Provisioning Pod Network Routes](11-pod-network-routes.md)
+Next: [Podが使うネットワーク経路のプロビジョニング](11-pod-network-routes.md)

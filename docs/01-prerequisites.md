@@ -2,13 +2,13 @@
 
 ## Proxmox Hypervisor
 
-This tutorial is intended to be performed with a [Proxmox](https://proxmox.com/en/) hypervisor, but you can also use it with ESXi, KVM, Virtualbox or other hypervisor.
+本チュートリアルでは、Kubernetesクラスターのブートストラップに必要な計算資源のプロビジョニングを一から効率的に行うために[Proxmox](https://proxmox.com/en/) を活用しています。代わりにESXi、KVM、Virtualboxあるいはその他のハイパーバイザを使用できます。
 
-> The compute resources required for this tutorial is 25GB of RAM and 140GB HDD (or SSD).
+> 本チュートリアルに必要な計算資源では少なくとも25GBのRAM、140GBのHDD(SSD)が必要です。
 
-List of the VM used in this tutorial :
+本チュートリアルで使用するVMのリスト:
 
-|Name|Role|vCPU|RAM|Storage (thin)|IP|OS|
+|名前|役割|vCPU|RAM|Storage (thin)|IP|OS|
 |--|--|--|--|--|--|--|
 |controller-0|controller|2|4GB|20GB|192.168.8.10/24|Ubuntu|
 |controller-1|controller|2|4GB|20GB|192.168.8.11/24|Ubuntu|
@@ -18,7 +18,7 @@ List of the VM used in this tutorial :
 |worker-2|worker|2|4GB|20GB|192.168.8.22/24|Ubuntu|
 |gateway-01|Reverse Proxy, client tools, gateway|1|1GB|20GB|192.168.8.1/24 + PUBLIC IP|Debian|
 
-On the Proxmox hypervisor, I just added the `k8s-` prefix in the VM names.
+Promoxのハイパーバイザ上では、私の環境では`k8s-`というプレフィックスをVMの名前につけました。
 
 ![proxmox vm list](images/proxmox-vm-list.PNG)
 
@@ -280,14 +280,14 @@ PUBLIC_GW_IP    gateway-01.external
 sudo reboot
 ```
 
-## Running Commands in Parallel with tmux
+## tmuxを使った並列なコマンド実行
 
-[tmux](https://github.com/tmux/tmux/wiki) can be used to run commands on multiple compute instances at the same time. Labs in this tutorial may require running the same commands across multiple compute instances, in those cases consider using tmux and splitting a window into multiple panes with synchronize-panes enabled to speed up the provisioning process.
+[tmux](https://github.com/tmux/tmux/wiki)を使用すると、複数のcomputeインスタンスで同時にコマンドを実行できます。本チュートリアルでは、同じコマンドを複数のコンピュートインスタンスで実行する必要がある場合があります。その場合、tmuxを使用して、プロビジョニングプロセスを高速化するために同期を有効にした複数のペインにウィンドウを分割することを検討してください。
 
-> The use of tmux is optional and not required to complete this tutorial.
+> tmuxの使用はオプションであり、このチュートリアルを完了するために必須ではありません。
 
 ![tmux screenshot](images/tmux-screenshot.png)
 
 > Enable synchronize-panes by pressing `ctrl+b` followed by `shift+:`. Next type `set synchronize-panes on` at the prompt. To disable synchronization: `set synchronize-panes off`.
 
-Next: [Installing the Client Tools](02-client-tools.md)
+Next: [クライアントツールのインストール](02-client-tools.md)

@@ -1,20 +1,20 @@
-# Generating the Data Encryption Config and Key
+# データ暗号化の設定とキーの生成
 
-Kubernetes stores a variety of data including cluster state, application configurations, and secrets. Kubernetes supports the ability to [encrypt](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data) cluster data at rest.
+Kubernetesはクラスタの状態、アプリケーションの構成、機密情報など、さまざまなデータを保存します。Kubernetesはクラスタデータを[暗号化](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data)する機能をサポートします。
 
-In this lab you will generate an encryption key and an [encryption config](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#understanding-the-encryption-at-rest-configuration) suitable for encrypting Kubernetes Secrets.
+本実習では、Kubernetes Secretsの暗号化に適したキーと[コンフィグ](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#understanding-the-encryption-at-rest-configuration)を生成します。
 
-## The Encryption Key
+## 暗号化キー
 
-Generate an encryption key:
+暗号化キーを生成します:
 
 ```bash
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 ```
 
-## The Encryption Config File
+## 暗号化コンフィグファイル
 
-Create the `encryption-config.yaml` encryption config file:
+`encryption-config.yaml`という名前の暗号化コンフィグファイルを生成します:
 
 ```bash
 cat > encryption-config.yaml <<EOF
@@ -32,7 +32,7 @@ resources:
 EOF
 ```
 
-Copy the `encryption-config.yaml` encryption config file to each controller instance:
+暗号化コンフィグファイル`encryption-config.yaml`を各コントロールプレーン用インスタンスにコピーします:
 
 ```bash
 for instance in controller-0 controller-1 controller-2; do
@@ -40,4 +40,4 @@ for instance in controller-0 controller-1 controller-2; do
 done
 ```
 
-Next: [Bootstrapping the etcd Cluster](07-bootstrapping-etcd.md)
+Next: [etcdクラスターのブートストラップ](07-bootstrapping-etcd.md)

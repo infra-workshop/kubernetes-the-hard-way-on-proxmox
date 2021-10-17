@@ -1,14 +1,14 @@
 # Provisioning Compute Resources
 
-Kubernetes requires a set of machines to host the Kubernetes control plane and the worker nodes where containers are ultimately run. In this lab you will check and eventually adjust the configuration defined in the `01-prerequisites` part.
+Kubernetesには、コントロールプレーンとコンテナが最終的に実行されるワーカーノードをホストするマシンのセットが必要です。本実習では、`01-prerequisites`に記された設定どおりになるようにVM構成を調整し、確認していきます。
 
 ## Networking
 
-The Kubernetes [networking model](https://kubernetes.io/docs/concepts/cluster-administration/networking/#kubernetes-model) assumes a flat network in which containers and nodes can communicate with each other. In cases where this is not desired [network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/) can limit how groups of containers are allowed to communicate with each other and external network endpoints.
+Kubernetesの[ネットワークモデル](https://kubernetes.io/docs/concepts/cluster-administration/networking/#kubernetes-model)は、コンテナとノードが相互に通信できるフラットなネットワークを想定しています。これが望ましくない場合は、[ネットワークポリシー](https://kubernetes.io/docs/concepts/services-networking/network-policies/)を使ってコンテナのグループが相互に、もしくは外部ネットワークエンドポイントと通信することを制限できます。
 
-> Setting up network policies is out of scope for this tutorial.
+> ネットワークポリシーの設定は、本チュートリアルの対象外です。
 
-### Virtual Private Cloud Network
+### 仮想プライベートクラウドネットワーク(VPC)
 
 We provisioned this network in the `01-prerequisites` part: `192.168.8.0/24` which can host up to `253` Kubernetes nodes (`254 - 1` for gateway). This is our "VPC-like" network with private IP addresses.
 
@@ -120,7 +120,7 @@ rtt min/avg/max/mdev = 0.650/0.650/0.650/0.000 ms
 
 SSH will be used to configure the controller and worker instances.
 
-On the `gateway-01` VM, generate SSH key for your working user:
+`gateway-01`のVM上で、generate SSH key for your working user:
 
 ```bash
 ssh-keygen
@@ -202,4 +202,4 @@ Connection to controller-0 closed.
 nemo@gateway-01:~$
 ```
 
-Next: [Provisioning a CA and Generating TLS Certificates](04-certificate-authority.md)
+Next: [CA証明書のプロビジョニングとTLS証明書の生成](04-certificate-authority.md)
