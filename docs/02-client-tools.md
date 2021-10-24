@@ -46,7 +46,7 @@ Version: 1.4.1
 Runtime: go1.12.12
 ```
 
-## Install kubectl
+## kubectlのインストール
 
 `kubectl`コマンドは、KubernetesのAPIサーバーとの対話に使用されます。On the **gateway-01** VM, 公式リリースバイナリーから`kubectl`をダウンロードしてインストールします:
 

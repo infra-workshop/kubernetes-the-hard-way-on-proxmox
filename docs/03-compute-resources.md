@@ -10,11 +10,11 @@ Kubernetesの[ネットワークモデル](https://kubernetes.io/docs/concepts/c
 
 ### 仮想プライベートクラウドネットワーク(VPC)
 
-We provisioned this network in the `01-prerequisites` part: `192.168.8.0/24` which can host up to `253` Kubernetes nodes (`254 - 1` for gateway). This is our "VPC-like" network with private IP addresses.
+前提準備のパートで`192.168.8.0/24`をプロビジョンし、253個までのホストを起動することができるネットワークがあります。今回はこれを「VPC」チックにプライベートアドレスの割当に使っていきます。
 
-### Pods Network Ranges
+### Pods Network範囲
 
-Containers/Pods running on each workers need networks to communicate with other ressources. We will use the `10.200.0.0/16` private range to create Pods subnetworks:
+各ノードで動作するコンテナ/Podでは、他のリソースと通信するためのネットワークが必要です。Podに割り当てるサブネットワークアドレスは今回`10.200.0.0/16` の範囲で使っていきます。
 
 * 10.200.0.0/24 : worker-0
 * 10.200.1.0/24 : worker-1
@@ -22,9 +22,11 @@ Containers/Pods running on each workers need networks to communicate with other 
 
 ### Firewall Rules
 
-All the flows are allowed inside the Kubernetes private network (`vmbr8`). In the `01-prerequisites` part, the `gateway-01` VM firewall has been configured to use NAT and allow the following INPUT protocols (from external): `icmp`, `tcp/22`, `tcp/80`, `tcp/443` and `tcp/6443`.
+Kubernetesのプライベートネットワーク(`vmbr8`)の内部では、すべてのネットワークフローが許可されます。前提準備のパートでは`gateway-01` VMのファイアウォールが外部との通信に対しては下記のINPUTプロトコルにおいてNATを使うように設定されています。
 
-Check the rules on the `gateway-01` VM (example if `ens18` is the public network interface):
+- `icmp`, `tcp/22`, `tcp/80`, `tcp/443` 及び `tcp/6443`.
+
+`gateway-01`上で以下のようにしてiptablesのルールを確認してみましょう(`ens18`を指定した場合の例)
 
 ```bash
 root@gateway-01:~# iptables -L INPUT -v -n
@@ -42,11 +44,11 @@ Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
 
 ### Kubernetes Public IP Address
 
-A public IP address need to be defined on the public network interface of the `gateway-01` VM (done in the `01-prerequisites` part).
+前提条件で指定したとおり、`gateway-01` VMにパブリックネットワークと通信するためのIPアドレスが必要です。
 
 ### Verification
 
-On each VM, check the active IP address(es) with the following command:
+各VMでアクティブなIPアドレスを以下のコマンドで確認します
 
 ```bash
 ip a
@@ -69,13 +71,13 @@ ip a
        valid_lft forever preferred_lft forever
 ```
 
-From the `gateway-01` VM, try to ping all controllers and workers VM:
+`gateway-01`から以下のようにして各VMにpingが通ることを確認します
 
 ```bash
 for i in 0 1 2; do ping -c1 controller-$i; ping -c1 worker-$i; done
 ```
 
-> Output:
+> 出力:
 
 ```bash
 PING controller-0 (192.168.8.10) 56(84) bytes of data.
@@ -120,13 +122,13 @@ rtt min/avg/max/mdev = 0.650/0.650/0.650/0.000 ms
 
 SSH will be used to configure the controller and worker instances.
 
-`gateway-01`のVM上で、generate SSH key for your working user:
+`gateway-01`のVM上で、お好きなユーザーで使用するためのSSHキーを生成します:
 
 ```bash
 ssh-keygen
 ```
 
-> Output (example for the user nemo):
+> 出力(nemoユーザーの場合の例):
 
 ```bash
 Generating public/private rsa key pair.
@@ -158,7 +160,7 @@ Print the public key and copy it:
 cat /home/nemo/.ssh/id_rsa.pub
 ```
 
-> Output (example for the user nemo):
+> 出力(nemoユーザーの場合の例):
 
 ```bash
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZwdkThm90GKiBPcECnxqPfPIy0jz3KAVxS5i1GcfdOMmj947/iYlKrYVqXmPqHOy1vDRJQHD1KpkADSnXREoUJp6RpugR+qei962udVY+Y/eNV2JZRt/dcTlGwqSwKjjE8a5n84fu4zgJcvIIZYG/vJpN3ock189IuSjSeLSBAPU/UQzTDAcNnHEeHDv7Yo2wxGoDziM7sRGQyFLVHKJKtA28+OZT8DKaE4XY78ovmsMJuMDMF+YLKm12/f79xS0AYw0KXb97TAb9PhFMqqOKknN+mvzbccAih6gJEwB646Ju6VlBRBky7c6ZMsDR9l99uQtlXcv8lwiheYE4nJmF nemo@gateway-01
