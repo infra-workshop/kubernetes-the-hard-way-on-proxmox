@@ -154,7 +154,7 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
-Print the public key and copy it:
+公開鍵をcatで表示してコピーします
 
 ```bash
 cat /home/nemo/.ssh/id_rsa.pub
@@ -166,20 +166,20 @@ cat /home/nemo/.ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZwdkThm90GKiBPcECnxqPfPIy0jz3KAVxS5i1GcfdOMmj947/iYlKrYVqXmPqHOy1vDRJQHD1KpkADSnXREoUJp6RpugR+qei962udVY+Y/eNV2JZRt/dcTlGwqSwKjjE8a5n84fu4zgJcvIIZYG/vJpN3ock189IuSjSeLSBAPU/UQzTDAcNnHEeHDv7Yo2wxGoDziM7sRGQyFLVHKJKtA28+OZT8DKaE4XY78ovmsMJuMDMF+YLKm12/f79xS0AYw0KXb97TAb9PhFMqqOKknN+mvzbccAih6gJEwB646Ju6VlBRBky7c6ZMsDR9l99uQtlXcv8lwiheYE4nJmF nemo@gateway-01
 ```
 
-On the controllers and workers nodes, create the `/root/.ssh` folder and create the file `/root/.ssh/authorized_keys` to paste the previously copied public key:
+各ノード上でこの公開鍵をばらまきます(訳注: 下記のように手でやってもいいですし`  ssh-copy-id user@hostname`してもいいと思います)
 
 ```bash
 mkdir -p /root/.ssh
 vi /root/.ssh/authorized_keys
 ```
 
-From the `gateway-01`, check if you can connect to the `root` account of all controllers and workers (example for controller-0):
+`gateway-01`から各VMに対してSSHできることを確認します(下記はcontroller-0の例)
 
 ```bash
 ssh root@controller-0
 ```
 
-> Output:
+> 出力
 
 ```bash
 Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 4.15.0-101-generic x86_64)
@@ -196,7 +196,7 @@ Now, you can logout:
 exit
 ```
 
-> Output:
+> 出力
 
 ```bash
 logout
