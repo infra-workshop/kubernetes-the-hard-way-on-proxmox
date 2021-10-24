@@ -52,7 +52,7 @@ coredns-699f8ddd77-gtcgb   1/1     Running   0          20s
 Deploymentリソース`busybox`をデプロイします:
 
 ```bash
-kubectl run --generator=run-pod/v1 busybox --image=busybox:1.28 --command -- sleep 3600
+kubectl run busybox --image=busybox:1.28 --command -- sleep 3600
 ```
 
 Deploymentリソース`busybox`によって作られたPodの一覧を表示します:
