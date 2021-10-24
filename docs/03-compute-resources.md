@@ -166,7 +166,7 @@ cat /home/nemo/.ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZwdkThm90GKiBPcECnxqPfPIy0jz3KAVxS5i1GcfdOMmj947/iYlKrYVqXmPqHOy1vDRJQHD1KpkADSnXREoUJp6RpugR+qei962udVY+Y/eNV2JZRt/dcTlGwqSwKjjE8a5n84fu4zgJcvIIZYG/vJpN3ock189IuSjSeLSBAPU/UQzTDAcNnHEeHDv7Yo2wxGoDziM7sRGQyFLVHKJKtA28+OZT8DKaE4XY78ovmsMJuMDMF+YLKm12/f79xS0AYw0KXb97TAb9PhFMqqOKknN+mvzbccAih6gJEwB646Ju6VlBRBky7c6ZMsDR9l99uQtlXcv8lwiheYE4nJmF nemo@gateway-01
 ```
 
-各ノード上でこの公開鍵をばらまきます(訳注: 下記のように手でやってもいいですし`  ssh-copy-id user@hostname`してもいいと思います)
+各ノード上でこの公開鍵をばらまきます(訳注: 下記のように手でやってもいいですし`ssh-copy-id user@hostname`してもいいと思います)
 
 ```bash
 mkdir -p /root/.ssh
