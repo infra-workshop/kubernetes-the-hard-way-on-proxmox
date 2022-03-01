@@ -7,7 +7,7 @@
 CoreDNS yamlを取得します:
 
 ```bash
-wget https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
+wget https://storage.googleapis.com/kubernetes-the-hard-way/coredns.yaml
 ```
 
 Edit the `coredns.yaml` file to change CoreDNS configuration to enable DNS resolution for external name:
